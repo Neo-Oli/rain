@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>rain</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="rain.css" type="text/css">
+    </head>
+    <body class="rain-demosite">
+        <div id="rain1">
+            <div class="rain-nojs">Browser animation that requires Javascript.</div>
+        </div>
+        <script src="dist/bundle.js"></script>
+        <script>
+            window.onload = function() {
+                rain1=rain.rain("rain1");
+                rain1.play()
+            }
+        </script>
+    </body>
+</html>
+
+

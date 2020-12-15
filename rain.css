@@ -1,0 +1,18 @@
+body.rain-demosite{
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    font-family:sans-serif;
+    background-color:#070215;
+}
+#rain1{
+    width:100%;
+    height:100%;
+    color:white;
+}
+.rain-container canvas{
+    width:100%;
+    height:100%;
+    top:0px;
+    left:0px;
+}

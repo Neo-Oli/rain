@@ -1,0 +1,36 @@
+{
+  "name": "rain",
+  "version": "0.0.1",
+  "description": "A Javascript simulation of rain.",
+  "main": "src/rain.js",
+  "repository": "git@github.com:Neo-Oli/rain.git",
+  "author": "Oli 'glow' Schmidhauser <oli@glow.li>",
+  "license": "GPL-3.0",
+  "scripts": {
+    "dev": "webpack --mode=development --watch",
+    "build": "webpack --mode=development",
+    "prod": "webpack --mode=production",
+    "lint": "eslint src/*.js --color --ext js --fix"
+  },
+  "devDependencies": {
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "babel-eslint": "*",
+    "babel-loader": "*",
+    "eslint": "*",
+    "eslint-config-prettier": "*",
+    "eslint-config-standard": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-node": "*",
+    "eslint-plugin-prefer-arrow": "*",
+    "eslint-plugin-prettier": "*",
+    "eslint-plugin-promise": "*",
+    "eslint-plugin-sort-destructure-keys": "*",
+    "prettier": "*",
+    "webpack": "*",
+    "webpack-cli": "*"
+  },
+  "dependencies": {
+    "color": "*"
+  }
+}

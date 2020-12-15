@@ -1,0 +1,38 @@
+{
+    "parser": "babel-eslint",
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "standard",
+        "eslint-config-prettier",
+        "plugin:prettier/recommended"
+    ],
+
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "plugins": ["sort-destructure-keys", "prefer-arrow"],
+    "rules": {
+        "prefer-arrow/prefer-arrow-functions": [
+            "error",
+            {
+                "disallowPrototype": true,
+                "singleReturnOnly": false,
+                "classPropertiesAllowed": false
+            }
+        ],
+        "eqeqeq": "error",
+        "prefer-template": "error",
+        "prettier/prettier": "error",
+        "linebreak-style": ["error", "unix"],
+        "sort-destructure-keys/sort-destructure-keys": "error",
+        "no-var": 1
+    }
+}
