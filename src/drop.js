@@ -16,6 +16,7 @@ export default class Drop extends Entity {
         this.color = Color(this.rain.color).fade(this.blur).array()
     }
 
+    // get a random position inside the x axis of the spawnable area
     getRandomPos() {
         return (
             Math.floor(Math.random() * (this.rain.max - this.rain.min)) +
@@ -27,6 +28,7 @@ export default class Drop extends Entity {
         super.destroy()
     }
 
+    // calculate the changes based on the time(work) passed
     work(work) {
         super.work(work)
         let speed = this.speed * (this.z * 10)

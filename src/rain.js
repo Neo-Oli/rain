@@ -9,7 +9,7 @@ export default class Rain {
         this.dropsMax = 3000 // max drops, if all else fails
         this.min = 0
         this.max = 0
-        this.wind = 15
+        this.wind = 15 // This is an angle in degrees
         this.windRange = 60 // don't go over 90
         this.speed = 100
         const canvasError = 'Your browser does not support the canvas element.'
@@ -40,6 +40,7 @@ export default class Rain {
         this.tickObjects = ['drops']
     }
 
+    // This is the drawing loop. It draws all the things to the canvas
     draw(d) {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         for (const o in this.tickObjects) {
@@ -77,6 +78,7 @@ export default class Rain {
         return Math.round(Math.pow(Math.random(), pow) * (max - min) + min)
     }
 
+    // Do some randomness to the wind to simulate changing wind intensity
     windChangeCalc() {
         if (this.random(0, 5) === 0) {
             this.windPositiveChange = !this.windPositiveChange
@@ -101,6 +103,10 @@ export default class Rain {
         }
     }
 
+    /*
+     * Do some randomness to the drops per second in order to simulate changing
+     * rain intensity
+     */
     dpsChangeCalc() {
         if (this.random(0, 5) === 0) {
             this.dpsPositiveChange = !this.dpsPositiveChange
@@ -135,6 +141,11 @@ export default class Rain {
         this.getadps()
     }
 
+    /*
+     * Drops per second assumes a width of 1000 in order for the rain density
+     * to be consistent. So we need to factor in the actual size of the spawn
+     * area (min/max from getRange())
+     */
     getadps() {
         this.adps = Math.round((this.dps / 1000) * (0 - this.min + this.max))
         if (this.adps > this.adpsMax) {
@@ -142,6 +153,13 @@ export default class Rain {
         }
     }
 
+    /*
+     * because drops can travel horizontaly, we need to increase the max area
+     * that we need to spawn drops. We're calculating this based on the current
+     * wind angle so we don't need to calculate drops that will not be rendered.
+     * When the wind suddenly changes there moght be a short window where some
+     * area doesn't have drops, but it's usually not noticable
+     */
     getRange() {
         let min = 0
         let max = this.width
@@ -163,6 +181,7 @@ export default class Rain {
         this.max = max
     }
 
+    // Spawn a new raindrop
     spawn(timestamp) {
         const drop = new Drop(this, timestamp)
         if (this.drops.length <= this.dropsMax) {
@@ -171,6 +190,10 @@ export default class Rain {
         }
     }
 
+    /*
+     * this is where all movement and spawning is done.
+     * Basically the main loop
+     */
     tick(timestamp) {
         if (this.start === undefined) {
             this.start = timestamp
