@@ -27,6 +27,8 @@ export const ui = (rain) => {
     .${className}{
         user-select: none;
         position: relative;
+        height: 100%;
+        width: 100%;
     }
     .${className} canvas{
         display: block;
