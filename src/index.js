@@ -1,4 +1,4 @@
 import Rain from './rain'
-export const rain = (id) => {
-    return new Rain(id)
+export const rain = (id, overwriteOptions) => {
+    return new Rain(id, overwriteOptions)
 }

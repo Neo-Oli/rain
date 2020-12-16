@@ -15,17 +15,18 @@ export default class Rain {
                 canvasError:
                     'Your browser does not support the canvas element.',
                 debug: false,
-                showControls: true,
                 rainColor: '#001659',
                 controlColor: '#00000055',
                 textColor: 'white',
                 className: 'rain-container',
                 speed: 100,
+                speedMax: 1000,
                 ui: true,
                 lPlay: 'play',
                 lPause: 'pause',
                 lStop: 'stop',
-                lDebug: 'debug'
+                lDebug: 'debug',
+                lSpeed: 'speed'
             },
             ...overwriteOptions
         })
@@ -33,6 +34,7 @@ export default class Rain {
         this.max = 0
         this.savedSpeed = this.speed
         this.windRange = Math.min(this.windRange, 89) // don't go over 90
+        this.speedDefault = this.speed
 
         this.id = id
         this.elapsed = 0
@@ -48,6 +50,7 @@ export default class Rain {
         this.windPositiveChange = true
         this.windChange = 0
         this.tickObjects = ['drops']
+        this.paused = false
 
         this.container = document.getElementById(id)
         this.container.innerHTML = '' // renoves nojs element
@@ -87,6 +90,7 @@ export default class Rain {
                 this.ctx.fillStyle = '#ffffff'
                 const stats = [
                     `fps: ${this.fps}`,
+                    `speed: ${this.speed}`,
                     `elapsed time: ${Math.floor(this.elapsed)}`,
                     `work done: ${Math.floor(this.worked)}`,
                     `drops (all): ${this.drops.length}`,
@@ -181,6 +185,14 @@ export default class Rain {
         this.adps = Math.round((this.dps / 1000) * (0 - this.min + this.max))
         if (this.adps > this.adpsMax) {
             this.adps = this.adpsMax
+        }
+    }
+
+    setSpeed(value = this.speedDefault) {
+        if (!this.paused) {
+            this.speed = value
+        } else {
+            this.savedSpeed = value
         }
     }
 
@@ -282,15 +294,17 @@ export default class Rain {
         this.savedSpeed = this.speed
         this.speed = 0
         this.innerContainer.classList.add('paused')
+        this.paused = true
     }
 
     unpause() {
         this.speed = this.savedSpeed
         this.innerContainer.classList.remove('paused')
+        this.paused = false
     }
 
     stop() {
-        if (this.speed === 0) {
+        if (this.paused) {
             this.unpause()
         }
         this.stopped = true

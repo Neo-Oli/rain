@@ -13,6 +13,7 @@ export const ui = (rain) => {
     controlsInput.id = `${rain.className}_Input`
 
     const controlsTrigger = document.createElement('LABEL')
+    controlsTrigger.classList.add('controlsTrigger')
     controlsTrigger.innerHTML = '⚙'
     controlsTrigger.htmlFor = controlsInput.id
 
@@ -21,6 +22,7 @@ export const ui = (rain) => {
     controlsContainer.appendChild(controlsTrigger)
 
     const styles = document.createElement('STYLE')
+    uiContainer.appendChild(styles)
     styles.innerHTML = `
     .${className}{
         user-select: none;
@@ -58,6 +60,15 @@ export const ui = (rain) => {
         right: 1em;
         bottom: 1em;
     }
+    .${className} .controls .reset{
+        font-size: 2em;
+        position: relative;
+        top: 0.25em;
+    }
+    .${className} .controls input[type=range]{
+        position: relative;
+        top: 0.5em;
+    }
     .${className} .playbutton:before{
         display: inline-block;
         content: '▶';
@@ -76,36 +87,43 @@ export const ui = (rain) => {
         bottom: 1em;
         right: 1em;
         width: auto;
-        text-align: right;
-        height: 3em;
     }
     .${className} .controls{
         max-width: 0;
         display: inline-block;
         overflow: hidden;
         transition: all 1s;
-        white-space: nowrap;
         line-height: 3em;
+        max-height: 3em;
+    }
+    .${className} .controls>div{
+        white-space: nowrap;
     }
     .${className} .controlsContainer #${controlsInput.id}:checked+.controls{
-        max-width: 20em;
+        max-width: 360px;
         padding-left: 1em;
         padding-right: 1em;
+        max-height: 20em;
     }
-    .${className} .controlsContainer input{
+    .${className} .controlsContainer #${controlsInput.id}{
         display: none;
     }
-    .${className} .controlsContainer label{
-        color: ${rain.textColor};
+    .${className} .controlsContainer .controlsTrigger{
         font-size: 3em;
         line-height: 1em;
-        float: right;
         cursor: pointer;
+        padding: 0;
+    }
+    .${className} label{
+        color: ${rain.textColor};
+        padding-left: 1em;
     }
     .${className} button{
         background: transparent;
+        padding: 0 1em;
         color: ${rain.textColor};
         border: none;
+        font-size: 1em;
         cursor: pointer;
     }
     `
@@ -115,7 +133,6 @@ export const ui = (rain) => {
     debugButton.addEventListener('click', () => {
         rain.debug = !rain.debug
     })
-    controls.appendChild(debugButton)
 
     const pauseButton = document.createElement('BUTTON')
     pauseButton.classList.add('pauseButton')
@@ -123,7 +140,6 @@ export const ui = (rain) => {
     pauseButton.addEventListener('click', () => {
         rain.pause()
     })
-    controls.appendChild(pauseButton)
 
     const unpauseButton = document.createElement('BUTTON')
     unpauseButton.classList.add('unpauseButton')
@@ -131,7 +147,6 @@ export const ui = (rain) => {
     unpauseButton.addEventListener('click', () => {
         rain.unpause()
     })
-    controls.appendChild(unpauseButton)
 
     const stopButton = document.createElement('BUTTON')
     stopButton.classList.add('stopbutton')
@@ -139,7 +154,6 @@ export const ui = (rain) => {
     stopButton.addEventListener('click', () => {
         rain.stop()
     })
-    controls.appendChild(stopButton)
 
     const playButton = document.createElement('BUTTON')
     playButton.classList.add('playbutton')
@@ -148,7 +162,60 @@ export const ui = (rain) => {
         rain.play()
     })
     uiContainer.appendChild(playButton)
-    uiContainer.appendChild(styles)
+
+    const speedSlider = document.createElement('INPUT')
+    const speedLabel = document.createElement('LABEL')
+    speedLabel.innerHTML = `${rain.lSpeed}:`
+    speedSlider.id = `${rain.className}_speedLabel`
+    speedLabel.htmlFor = speedSlider.id
+    speedSlider.type = 'range'
+    speedSlider.min = '1'
+    speedSlider.max = 1000
+    speedSlider.value = logSliderReverse(rain.speedDefault, rain.speedMax)
+    speedSlider.addEventListener('input', () => {
+        rain.setSpeed(logSlider(speedSlider.value, rain.speedMax))
+    })
+
+    const speedSliderReset = document.createElement('BUTTON')
+    speedSliderReset.innerHTML = '⟲'
+    speedSliderReset.classList.add('reset')
+    speedSliderReset.addEventListener('click', () => {
+        speedSlider.value = logSliderReverse(rain.speedDefault, rain.speedMax)
+        rain.setSpeed()
+    })
+    const controlPanel = [
+        [debugButton, pauseButton, unpauseButton, stopButton],
+        [speedLabel, speedSlider, speedSliderReset]
+    ]
+    for (const l in controlPanel) {
+        const line = controlPanel[l]
+        const lineDiv = document.createElement('DIV')
+        controls.appendChild(lineDiv)
+        for (const e in line) {
+            const element = line[e]
+            lineDiv.appendChild(element)
+        }
+    }
     return uiContainer
+}
+const logSlider = (position, maxSpeed) => {
+    const min = 1
+    const max = maxSpeed
+    const minp = 1
+    const maxp = 1000
+    const minv = Math.log(min)
+    const maxv = Math.log(max)
+    const scale = (maxv - minv) / (maxp - minp)
+    return Math.round(Math.exp(minv + scale * (position - minp)))
+}
+const logSliderReverse = (speed, maxSpeed) => {
+    const min = 1
+    const max = maxSpeed
+    const minp = 1
+    const maxp = 1000
+    const minv = Math.log(min)
+    const maxv = Math.log(max)
+    const scale = (maxv - minv) / (maxp - minp)
+    return (Math.log(speed) - minv) / scale + minp
 }
 export default ui
