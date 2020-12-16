@@ -8,18 +8,4 @@ body.rain-demosite{
 body.rain-demosite #rain1{
     width:100%;
     height:100%;
-    color:white;
-}
-.rain-container canvas{
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-}
-.rain-container{
-    position: relative;
-    overflow: hidden;
-    width:100%;
-    height:100%;
-    user-select: none;
 }

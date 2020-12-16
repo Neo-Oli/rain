@@ -26,9 +26,12 @@ export default class Rain {
         this.canvas = document.createElement('CANVAS')
         this.canvas.innerHTML = canvasError
         this.innerContainer = document.createElement('DIV')
-        this.innerContainer.classList.add('rain-container')
         this.container.appendChild(this.innerContainer)
         this.innerContainer.appendChild(this.canvas)
+
+        // styles
+        this.canvas.style.display = 'block'
+
         this.drops = []
         this.ctx = this.canvas.getContext('2d')
         this.fps = 0
