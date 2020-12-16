@@ -26,6 +26,7 @@ export const ui = (rain) => {
     styles.innerHTML = `
     .${className}{
         user-select: none;
+        position: relative;
     }
     .${className} canvas{
         display: block;
