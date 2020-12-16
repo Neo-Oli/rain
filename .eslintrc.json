@@ -16,7 +16,7 @@
         "SharedArrayBuffer": "readonly"
     },
     "parserOptions": {
-        "ecmaVersion": 2018
+        "ecmaVersion": 2020
     },
     "plugins": ["sort-destructure-keys", "prefer-arrow"],
     "rules": {
@@ -36,6 +36,5 @@
         "multiline-comment-style": ["error", "starred-block"],
         "max-len": ["error", { "code": 80 }],
         "no-var": 1
-
     }
 }
