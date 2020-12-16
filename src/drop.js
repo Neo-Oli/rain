@@ -77,20 +77,6 @@ export default class Drop extends Entity {
                 2 * Math.PI // endAngle
             )
             ctx.fill() // actually draw
-            if (this.rain.debugGraphics) {
-                ctx.fillStyle = 'yellow'
-                ctx.beginPath() // start new path
-                ctx.ellipse(
-                    this.x,
-                    this.y,
-                    3,
-                    3,
-                    (angle * Math.PI) / 180,
-                    0,
-                    2 * Math.PI
-                )
-                ctx.fill() // actually draw
-            }
             return true
         }
         return false
