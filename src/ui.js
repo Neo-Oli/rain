@@ -174,21 +174,56 @@ export const ui = (rain) => {
     speedSlider.type = 'range'
     speedSlider.min = '1'
     speedSlider.max = 1000
-    speedSlider.value = logSliderReverse(rain.speedDefault, rain.speedMax)
+    speedSlider.value = logSliderReverse(rain.speedDefault, 1, rain.speedMax)
     speedSlider.addEventListener('input', () => {
-        rain.setSpeed(logSlider(speedSlider.value, rain.speedMax))
+        rain.setSpeed(logSlider(speedSlider.value, 1, rain.speedMax))
     })
 
     const speedSliderReset = document.createElement('BUTTON')
     speedSliderReset.innerHTML = '⟲'
     speedSliderReset.classList.add('reset')
     speedSliderReset.addEventListener('click', () => {
-        speedSlider.value = logSliderReverse(rain.speedDefault, rain.speedMax)
+        speedSlider.value = logSliderReverse(
+            rain.speedDefault,
+            1,
+            rain.speedMax
+        )
         rain.setSpeed()
     })
+    const parallaxMin = 0.0001
+    const parallaxSlider = document.createElement('INPUT')
+    const parallaxLabel = document.createElement('LABEL')
+    parallaxLabel.innerHTML = `${rain.lParallax}:`
+    parallaxSlider.id = `${rain.className}_parallaxLabel`
+    parallaxLabel.htmlFor = parallaxSlider.id
+    parallaxSlider.type = 'range'
+    parallaxSlider.min = '1'
+    parallaxSlider.max = 1000
+    parallaxSlider.value = logSliderReverse(
+        rain.parallaxDefault,
+        parallaxMin,
+        1
+    )
+    parallaxSlider.addEventListener('input', () => {
+        rain.parallax = logSlider(parallaxSlider.value, parallaxMin, 1)
+    })
+
+    const parallaxSliderReset = document.createElement('BUTTON')
+    parallaxSliderReset.innerHTML = '⟲'
+    parallaxSliderReset.classList.add('reset')
+    parallaxSliderReset.addEventListener('click', () => {
+        parallaxSlider.value = logSliderReverse(
+            rain.parallaxDefault,
+            parallaxMin,
+            1
+        )
+        rain.parallax = rain.parallaxDefault
+    })
+
     const controlPanel = [
         [debugButton, pauseButton, unpauseButton, stopButton],
-        [speedLabel, speedSlider, speedSliderReset]
+        [speedLabel, speedSlider, speedSliderReset],
+        [parallaxLabel, parallaxSlider, parallaxSliderReset]
     ]
     for (const l in controlPanel) {
         const line = controlPanel[l]
@@ -201,19 +236,15 @@ export const ui = (rain) => {
     }
     return uiContainer
 }
-const logSlider = (position, maxSpeed) => {
-    const min = 1
-    const max = maxSpeed
+const logSlider = (position, min, max) => {
     const minp = 1
     const maxp = 1000
     const minv = Math.log(min)
     const maxv = Math.log(max)
     const scale = (maxv - minv) / (maxp - minp)
-    return Math.round(Math.exp(minv + scale * (position - minp)))
+    return Math.exp(minv + scale * (position - minp))
 }
-const logSliderReverse = (speed, maxSpeed) => {
-    const min = 1
-    const max = maxSpeed
+const logSliderReverse = (speed, min, max) => {
     const minp = 1
     const maxp = 1000
     const minv = Math.log(min)

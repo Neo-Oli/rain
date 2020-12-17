@@ -6,7 +6,7 @@ export default class Drop extends Entity {
         super(rain, timestamp)
         this.rain = rain
         this.x = this.getRandomPos()
-        this.z = this.rain.random(1, 100, 0.05)
+        this.z = this.rain.random(1, 100, rain.parallax)
         this.blur = Math.pow(this.z / 100, 0.5)
         this.size = this.rain.random(1, 5, 0.1)
         this.length = 20 * this.z

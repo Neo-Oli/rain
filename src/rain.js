@@ -12,6 +12,7 @@ export default class Rain {
                 dropsMax: 3000, // max drops, if all else fails
                 wind: 15, // This is an angle in degrees
                 windRange: 60, // Max wind angle
+                parallax: 0.02,
                 canvasError:
                     'Your browser does not support the canvas element.',
                 debug: false,
@@ -26,7 +27,8 @@ export default class Rain {
                 lPause: 'pause',
                 lStop: 'stop',
                 lDebug: 'debug',
-                lSpeed: 'speed'
+                lSpeed: 'speed',
+                lParallax: 'parallax'
             },
             ...overwriteOptions
         })
@@ -35,6 +37,7 @@ export default class Rain {
         this.savedSpeed = this.speed
         this.windRange = Math.min(this.windRange, 89) // don't go over 90
         this.speedDefault = this.speed
+        this.parallaxDefault = this.parallax
 
         this.id = id
         this.elapsed = 0
@@ -91,6 +94,7 @@ export default class Rain {
                 const stats = [
                     `fps: ${this.fps}`,
                     `speed: ${this.speed}`,
+                    `parallax: ${this.parallax}`,
                     `elapsed time: ${Math.floor(this.elapsed)}`,
                     `work done: ${Math.floor(this.worked)}`,
                     `drops (all): ${this.drops.length}`,
@@ -190,9 +194,9 @@ export default class Rain {
 
     setSpeed(value = this.speedDefault) {
         if (!this.paused) {
-            this.speed = value
+            this.speed = Math.round(value)
         } else {
-            this.savedSpeed = value
+            this.savedSpeed = Math.round(value)
         }
     }
 
