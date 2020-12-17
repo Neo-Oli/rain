@@ -35,6 +35,7 @@
         "sort-destructure-keys/sort-destructure-keys": "error",
         "multiline-comment-style": ["error", "starred-block"],
         "max-len": ["error", { "code": 80 }],
-        "no-var": 1
+        "no-var": 1,
+        "no-console": "error"
     }
 }
