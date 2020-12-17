@@ -403,11 +403,10 @@ export default class Ui {
         }
         .${className} .controls{
             max-width: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
+            overflow: hidden;
             transition: all 1s;
             line-height: 3em;
-            max-height: 3em;
+            max-height: 0em;
             background-color: ${rain.controlColor};
             position: absolute;
             bottom: 3em;
@@ -422,11 +421,17 @@ export default class Ui {
             padding-left: 1em;
             padding-right: 1em;
             max-height: calc(100% - 3em);
+            overflow-y: auto;
+            animation: hide-scroll 1s backwards;
+        }
+        @keyframes hide-scroll {
+            from, to { overflow: hidden; }
         }
         .${className} .controlsContainer #${this.controlsTriggerCheckId}{
             display: none;
         }
         .${className} .controlsContainer .controlsTrigger{
+            background-color: ${rain.controlColor};
             color: ${rain.textColor};
             font-size: 3em;
             line-height: 1em;
