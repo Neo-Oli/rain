@@ -90,6 +90,7 @@ export const ui = (rain) => {
         bottom: 1em;
         right: 1em;
         width: auto;
+        text-align: right;
     }
     .${className} .controls{
         max-width: 0;
@@ -98,12 +99,13 @@ export const ui = (rain) => {
         transition: all 1s;
         line-height: 3em;
         max-height: 3em;
+        text-align: left;
     }
     .${className} .controls>div{
         white-space: nowrap;
     }
     .${className} .controlsContainer #${controlsInput.id}:checked+.controls{
-        max-width: 360px;
+        max-width: calc(360px - 2em);
         padding-left: 1em;
         padding-right: 1em;
         max-height: 20em;
@@ -112,18 +114,20 @@ export const ui = (rain) => {
         display: none;
     }
     .${className} .controlsContainer .controlsTrigger{
+        color: ${rain.textColor};
         font-size: 3em;
         line-height: 1em;
         cursor: pointer;
         padding: 0;
     }
-    .${className} label{
+    .${className} .controls label{
         color: ${rain.textColor};
         padding-left: 1em;
+        width: 5em;
+        display: inline-block
     }
     .${className} button{
         background: transparent;
-        padding: 0 1em;
         color: ${rain.textColor};
         border: none;
         font-size: 1em;
