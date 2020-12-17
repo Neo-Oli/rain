@@ -1,6 +1,5 @@
 import Entity from './entity'
 import Color from 'color'
-import positiveAngle from './positiveAngle'
 export default class Drop extends Entity {
     constructor(rain, timestamp) {
         super(rain, timestamp)
@@ -34,15 +33,16 @@ export default class Drop extends Entity {
         let speed = this.speed * (this.z * 10)
         speed = (speed / 1000) * work
         this.y += speed
+        const wind = this.rain.wind
         // this is a right triangle
-        const alpha = 90 - positiveAngle(this.rain.wind)
+        const alpha = 90 - wind
         if (alpha) {
             const alphaRad = (alpha * Math.PI) / 180
             const a = speed
             const c = a / Math.sin(alphaRad)
             const b = Math.sqrt(Math.pow(c, 2) - Math.pow(a, 2))
             const windspeed = b
-            if (this.rain.wind > 0) {
+            if (wind > 0) {
                 this.x += windspeed
             } else {
                 this.x -= windspeed

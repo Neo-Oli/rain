@@ -59,23 +59,65 @@ export default class Ui {
             ],
             [
                 this.slider(
+                    'drops/s',
+                    'dps',
+                    1,
+                    1000,
+                    this.logSliderReverse(
+                        rain.dpsDefault,
+                        rain.dpsMin + 1,
+                        rain.dpsMax + 1
+                    ) - 1,
+                    (value) => {
+                        rain.dps = Math.ceil(
+                            this.logSlider(
+                                value,
+                                rain.dpsMin + 1,
+                                rain.dpsMax + 1
+                            ) - 1
+                        )
+                    },
+                    null,
+                    (state) => {
+                        rain.dpsLock = state
+                    },
+                    false
+                )
+            ],
+            [
+                this.slider(
+                    'wind',
+                    'wind',
+                    0 - rain.windRange,
+                    rain.windRange,
+                    rain.wind,
+                    (value) => {
+                        rain.wind = value
+                    },
+                    null,
+                    (state) => {
+                        rain.windLock = state
+                    },
+                    false
+                )
+            ],
+            [
+                this.slider(
                     'speed',
                     'speed',
                     1,
                     1000,
                     this.logSliderReverse(rain.speedDefault, 1, rain.speedMax),
-                    (slider) => {
-                        rain.setSpeed(
-                            this.logSlider(slider.value, 1, rain.speedMax)
-                        )
+                    (value) => {
+                        rain.setSpeed(this.logSlider(value, 1, rain.speedMax))
                     },
-                    (slider) => {
-                        slider.value = this.logSliderReverse(
+                    (value) => {
+                        rain.setSpeed()
+                        return this.logSliderReverse(
                             rain.speedDefault,
                             1,
                             rain.speedMax
                         )
-                        rain.setSpeed()
                     }
                 )
             ],
@@ -90,20 +132,20 @@ export default class Ui {
                         rain.parallaxMin,
                         1
                     ),
-                    (slider) => {
+                    (value) => {
                         rain.parallax = this.logSlider(
-                            slider.value,
+                            value,
                             rain.parallaxMin,
                             1
                         )
                     },
-                    (slider) => {
-                        slider.value = this.logSliderReverse(
+                    (value) => {
+                        rain.parallax = rain.parallaxDefault
+                        return this.logSliderReverse(
                             rain.parallaxDefault,
                             rain.parallaxMin,
                             1
                         )
-                        rain.parallax = rain.parallaxDefault
                     }
                 )
             ]
@@ -129,7 +171,18 @@ export default class Ui {
         return button
     }
 
-    slider(labelText, className, min, max, initialValue, input, reset) {
+    slider(
+        labelText,
+        className,
+        min,
+        max,
+        initialValue,
+        input,
+        reset,
+        toggle,
+        toggleInitial
+    ) {
+        const sliderContainer = document.createElement('DIV')
         const slider = document.createElement('INPUT')
         const label = document.createElement('LABEL')
         label.innerHTML = `${labelText}:`
@@ -140,16 +193,32 @@ export default class Ui {
         slider.max = max
         slider.value = initialValue
         slider.addEventListener('input', () => {
-            input(slider)
+            input(slider.value)
         })
-        const resetButton = this.button('⟲', () => {
-            reset(slider)
-        })
-        const sliderContainer = document.createElement('DIV')
         sliderContainer.classList.add(className)
         sliderContainer.appendChild(label)
         sliderContainer.appendChild(slider)
-        sliderContainer.appendChild(resetButton)
+        if (reset) {
+            const resetButton = this.button('⟲', () => {
+                slider.value = reset(slider.value)
+            })
+            sliderContainer.appendChild(resetButton)
+        }
+        if (toggle) {
+            const toggleBoxContainer = document.createElement('SPAN')
+            const toggleBox = document.createElement('INPUT')
+            toggleBox.type = 'checkbox'
+            toggleBox.addEventListener('input', () => {
+                const state = toggleBox.checked
+                slider.disabled = !state
+                input(slider.value)
+                toggle(state)
+            })
+            toggleBox.checked = toggleInitial
+            slider.disabled = !toggleBox.checked
+            toggleBoxContainer.appendChild(toggleBox)
+            sliderContainer.appendChild(toggleBoxContainer)
+        }
         return sliderContainer
     }
 

@@ -1,5 +1,4 @@
 import Drop from './drop'
-import positiveAngle from './positiveAngle'
 import schedule from './schedule'
 import Ui from './ui'
 export default class Rain {
@@ -7,10 +6,13 @@ export default class Rain {
         Object.assign(this, {
             ...{
                 dps: 100, // drops per second
+                dpsLock: false,
+                dpsMin: 0, // min drops per second
                 dpsMax: 500, // max drops per second
                 adpsMax: 1000, // max drops per second absolute
                 dropsMax: 3000, // max drops, if all else fails
                 wind: 15, // This is an angle in degrees
+                windLock: false,
                 windRange: 60, // Max wind angle
                 parallax: 0.02,
                 parallaxMin: 0.0001,
@@ -95,9 +97,11 @@ export default class Rain {
                     `work done: ${Math.floor(this.worked)}`,
                     `drops (all): ${this.drops.length}`,
                     `drops (rendered): ${this.dropsRendered}`,
-                    `drops per second per 1000 width: ${this.dps}`,
-                    `actual drops per second: ${this.adps}`,
+                    `drops per second: ${this.dps}`,
+                    `drops per second locked: ${this.dpsLock}`,
+                    `drops per second (width compensated): ${this.adps}`,
                     `wind: ${this.wind}`,
+                    `wind locked: ${this.windLock}`,
                     `min x: ${this.min}`,
                     `max x: ${this.max}`,
                     `windChange: ${this.windChange}`
@@ -115,26 +119,28 @@ export default class Rain {
 
     // Do some randomness to the wind to simulate changing wind intensity
     windChangeCalc() {
-        if (this.random(0, 5) === 0) {
-            this.windPositiveChange = !this.windPositiveChange
-        }
-        this.windChange = this.random(0, this.windRange / 4, 0.1)
-        if (this.windChange) {
-            if (this.windPositiveChange) {
-                this.wind += this.windChange
-            } else {
-                this.wind -= this.windChange
-            }
-            if (this.wind > this.windRange) {
-                this.wind = this.windRange
+        if (!this.windLock) {
+            if (this.random(0, 5) === 0) {
                 this.windPositiveChange = !this.windPositiveChange
             }
-            if (this.wind < 0 - this.windRange) {
-                this.wind = 0 - this.windRange
-                this.windPositiveChange = !this.windPositiveChange
+            this.windChange = this.random(0, this.windRange / 4, 0.1)
+            if (this.windChange) {
+                if (this.windPositiveChange) {
+                    this.wind += this.windChange
+                } else {
+                    this.wind -= this.windChange
+                }
+                if (this.wind > this.windRange) {
+                    this.wind = this.windRange
+                    this.windPositiveChange = !this.windPositiveChange
+                }
+                if (this.wind < 0 - this.windRange) {
+                    this.wind = 0 - this.windRange
+                    this.windPositiveChange = !this.windPositiveChange
+                }
+                this.getRange()
+                this.getadps()
             }
-            this.getRange()
-            this.getadps()
         }
     }
 
@@ -143,23 +149,25 @@ export default class Rain {
      * rain intensity
      */
     dpsChangeCalc() {
-        if (this.random(0, 5) === 0) {
-            this.dpsPositiveChange = !this.dpsPositiveChange
-        }
-        this.dpsChange = this.random(0, this.dpsMax, 0.01)
-        if (this.dpsPositiveChange) {
-            this.dps += this.dpsChange
-        } else {
-            this.dps -= this.dpsChange
-        }
-        if (this.dps > this.dpsMax) {
-            this.dps = this.dpsMax
-            this.dpsPositiveChange = !this.dpsPositiveChange
-        }
+        if (!this.dpsLock) {
+            if (this.random(0, 5) === 0) {
+                this.dpsPositiveChange = !this.dpsPositiveChange
+            }
+            this.dpsChange = this.random(0, this.dpsMax, 0.01)
+            if (this.dpsPositiveChange) {
+                this.dps += this.dpsChange
+            } else {
+                this.dps -= this.dpsChange
+            }
+            if (this.dps > this.dpsMax) {
+                this.dps = this.dpsMax
+                this.dpsPositiveChange = !this.dpsPositiveChange
+            }
 
-        if (this.dps < 0) {
-            this.dps = 0
-            this.dpsPositiveChange = !this.dpsPositiveChange
+            if (this.dps < this.dpsMin) {
+                this.dps = this.dpsMin
+                this.dpsPositiveChange = !this.dpsPositiveChange
+            }
         }
     }
 
@@ -206,17 +214,18 @@ export default class Rain {
     getRange() {
         let min = 0
         let max = this.width
+        const wind = this.wind
         // this is a right triangle
-        const alpha = 90 - positiveAngle(this.wind)
+        const alpha = 90 - wind
         if (alpha) {
             const alphaRad = (alpha * Math.PI) / 180
             const a = this.height
             const c = a / Math.sin(alphaRad)
             const b = Math.sqrt(Math.pow(c, 2) - Math.pow(a, 2))
-            if (this.wind < 0) {
+            if (wind < 0) {
                 max = this.width + b
             }
-            if (this.wind > 0) {
+            if (wind > 0) {
                 min = 0 - b
             }
         }
