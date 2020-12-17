@@ -12,15 +12,27 @@ export default class Drop extends Entity {
         this.y = 0 - this.length
         this.speedModifier = 1 + this.size / 5
         this.speed = 100 * this.speedModifier
-        this.color = Color(this.rain.rainColor).fade(this.blur).array()
+        if (rain.randomColors) {
+            this.color = Color.hsl([
+                this.randomNum(0, 360),
+                this.randomNum(0, 100),
+                this.randomNum(0, 100)
+            ])
+                .fade(this.blur)
+                .rgb()
+                .array()
+        } else {
+            this.color = rain.color.fade(this.blur).rgb().array()
+        }
     }
 
     // get a random position inside the x axis of the spawnable area
     getRandomPos() {
-        return (
-            Math.floor(Math.random() * (this.rain.max - this.rain.min)) +
-            this.rain.min
-        )
+        return Math.floor(this.randomNum(this.rain.min, this.rain.max))
+    }
+
+    randomNum(min, max) {
+        return Math.random() * (max - min) + min
     }
 
     destroy() {

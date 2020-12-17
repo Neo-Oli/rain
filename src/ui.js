@@ -64,11 +64,11 @@ export default class Ui {
                     1,
                     1000,
                     this.logSliderReverse(
-                        rain.dpsDefault,
+                        rain.dps,
                         rain.dpsMin + 1,
                         rain.dpsMax + 1
                     ) - 1,
-                    (value) => {
+                    (value, initialValue) => {
                         rain.dps = Math.ceil(
                             this.logSlider(
                                 value,
@@ -107,17 +107,15 @@ export default class Ui {
                     'speed',
                     1,
                     1000,
-                    this.logSliderReverse(rain.speedDefault, 1, rain.speedMax),
+                    this.logSliderReverse(rain.speed, 1, rain.speedMax),
                     (value) => {
                         rain.setSpeed(this.logSlider(value, 1, rain.speedMax))
                     },
-                    (value) => {
-                        rain.setSpeed()
-                        return this.logSliderReverse(
-                            rain.speedDefault,
-                            1,
-                            rain.speedMax
+                    (value, initialValue) => {
+                        rain.setSpeed(
+                            this.logSlider(initialValue, 1, rain.speedMax)
                         )
+                        return initialValue
                     }
                 )
             ],
@@ -127,11 +125,7 @@ export default class Ui {
                     'parallax',
                     1,
                     1000,
-                    this.logSliderReverse(
-                        rain.parallaxDefault,
-                        rain.parallaxMin,
-                        1
-                    ),
+                    this.logSliderReverse(rain.parallax, rain.parallaxMin, 1),
                     (value) => {
                         rain.parallax = this.logSlider(
                             value,
@@ -139,16 +133,29 @@ export default class Ui {
                             1
                         )
                     },
-                    (value) => {
-                        rain.parallax = rain.parallaxDefault
-                        return this.logSliderReverse(
-                            rain.parallaxDefault,
+                    (value, initialValue) => {
+                        rain.parallax = this.logSlider(
+                            initialValue,
                             rain.parallaxMin,
                             1
                         )
+                        return initialValue
                     }
                 )
-            ]
+            ],
+            [this.title('rain color')],
+            ...this.sliderGroup('rainColor'),
+            [
+                this.toggle(
+                    (state) => {
+                        rain.randomColors = state
+                    },
+                    false,
+                    'random colors'
+                )
+            ],
+            [this.title('background color')],
+            ...this.sliderGroup('bgColor')
         ]
         for (const l in controlPanel) {
             const line = controlPanel[l]
@@ -169,6 +176,67 @@ export default class Ui {
         button.innerHTML = `<div>${label}</div>`
         button.addEventListener('click', click)
         return button
+    }
+
+    title(string) {
+        const label = document.createElement('div')
+        label.classList.add('title')
+        label.innerHTML = string
+        return label
+    }
+
+    sliderGroup(color) {
+        const rain = this.rain
+        return [
+            [
+                this.slider(
+                    'hue',
+                    'hue',
+                    0,
+                    360,
+                    rain[color]().hue(),
+                    (value) => {
+                        rain[color](rain[color]().hue(value))
+                    },
+                    (value, initialValue) => {
+                        rain[color](rain[color]().hue(initialValue))
+                        return initialValue
+                    }
+                )
+            ],
+            [
+                this.slider(
+                    'satur.',
+                    'saturation',
+                    0,
+                    100,
+                    rain[color]().saturationl(),
+                    (value) => {
+                        rain[color](rain[color]().saturationl(value))
+                    },
+                    (value, initialValue) => {
+                        rain[color](rain[color]().saturationl(initialValue))
+                        return initialValue
+                    }
+                )
+            ],
+            [
+                this.slider(
+                    'lightness',
+                    'lightness',
+                    0,
+                    100,
+                    rain[color]().lightness(),
+                    (value) => {
+                        rain[color](rain[color]().lightness(value))
+                    },
+                    (value, initialValue) => {
+                        rain[color](rain[color]().lightness(initialValue))
+                        return initialValue
+                    }
+                )
+            ]
+        ]
     }
 
     slider(
@@ -200,26 +268,43 @@ export default class Ui {
         sliderContainer.appendChild(slider)
         if (reset) {
             const resetButton = this.button('⟲', () => {
-                slider.value = reset(slider.value)
+                slider.value = reset(slider.value, initialValue)
             })
             sliderContainer.appendChild(resetButton)
         }
         if (toggle) {
-            const toggleBoxContainer = document.createElement('SPAN')
-            const toggleBox = document.createElement('INPUT')
-            toggleBox.type = 'checkbox'
-            toggleBox.addEventListener('input', () => {
-                const state = toggleBox.checked
-                slider.disabled = !state
-                input(slider.value)
-                toggle(state)
-            })
-            toggleBox.checked = toggleInitial
-            slider.disabled = !toggleBox.checked
-            toggleBoxContainer.appendChild(toggleBox)
-            sliderContainer.appendChild(toggleBoxContainer)
+            sliderContainer.appendChild(
+                this.toggle((state, toggleInitial) => {
+                    slider.disabled = !state
+                    input(slider.value)
+                    toggle(state, initialValue)
+                }, toggleInitial)
+            )
+            slider.disabled = !toggleInitial.checked
         }
         return sliderContainer
+    }
+
+    toggle(func, toggleInitial, label) {
+        const toggleBoxContainer = document.createElement('SPAN')
+        const toggleBox = document.createElement('INPUT')
+        toggleBox.type = 'checkbox'
+        toggleBox.addEventListener('input', () => {
+            const state = toggleBox.checked
+            func(state)
+        })
+        toggleBox.checked = toggleInitial
+        if (label) {
+            const labelEl = document.createElement('LABEL')
+            const labelText = document.createElement('span')
+            labelText.innerHTML = label
+            labelEl.appendChild(toggleBox)
+            labelEl.appendChild(labelText)
+            toggleBoxContainer.appendChild(labelEl)
+        } else {
+            toggleBoxContainer.appendChild(toggleBox)
+        }
+        return toggleBoxContainer
     }
 
     get() {
@@ -310,21 +395,22 @@ export default class Ui {
         .${className} .controlsContainer{
             display: none;
             position: absolute;
-            background-color: ${rain.controlColor};
-            padding: 0.1em;
-            bottom: 1em;
-            right: 1em;
-            width: auto;
-            text-align: right;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
         }
         .${className} .controls{
             max-width: 0;
-            display: inline-block;
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
             transition: all 1s;
             line-height: 3em;
             max-height: 3em;
-            text-align: left;
+            background-color: ${rain.controlColor};
+            position: absolute;
+            bottom: 0;
+            right: 3em;
         }
         .${className} .controls>div{
             white-space: nowrap;
@@ -334,7 +420,7 @@ export default class Ui {
             max-width: calc(360px - 2em);
             padding-left: 1em;
             padding-right: 1em;
-            max-height: 20em;
+            max-height: 100%;
         }
         .${className} .controlsContainer #${this.controlsTriggerCheckId}{
             display: none;
@@ -344,7 +430,16 @@ export default class Ui {
             font-size: 3em;
             line-height: 1em;
             cursor: pointer;
-            padding: 0;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
+        .${className} .controls .title{
+            color: ${rain.textColor};
+        }
+
+        .${className} .controls label input + span{
+            margin-left: 1em;
         }
         .${className} .controls label{
             color: ${rain.textColor};

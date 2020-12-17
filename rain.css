@@ -3,7 +3,6 @@ body.rain-demosite{
     height:100vh;
     overflow:hidden;
     font-family:sans-serif;
-    background-color:#070215;
 }
 body.rain-demosite #rain1{
     width:100%;

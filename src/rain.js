@@ -1,6 +1,7 @@
 import Drop from './drop'
 import schedule from './schedule'
 import Ui from './ui'
+import Color from 'color'
 export default class Rain {
     constructor(id, overwriteOptions) {
         Object.assign(this, {
@@ -19,22 +20,23 @@ export default class Rain {
                 canvasError:
                     'Your browser does not support the canvas element.',
                 debug: false,
-                rainColor: '#001659',
+                color: '#001659',
                 controlColor: '#00000055',
                 textColor: 'white',
+                backgroundColor: '#070215',
                 className: 'rain-container',
                 speed: 100,
                 speedMax: 1000,
-                ui: true
+                ui: true,
+                randomColors: false
             },
             ...overwriteOptions
         })
+        this.color = Color(this.color)
         this.min = 0
         this.max = 0
         this.savedSpeed = this.speed
         this.windRange = Math.min(this.windRange, 89) // don't go over 90
-        this.speedDefault = this.speed
-        this.parallaxDefault = this.parallax
 
         this.id = id
         this.elapsed = 0
@@ -62,10 +64,27 @@ export default class Rain {
         this.container.appendChild(this.innerContainer)
         this.innerContainer.appendChild(this.canvas)
         this.canvas.style.display = 'block'
-        const ui = new Ui(this)
+        this.bgColor(Color(this.backgroundColor))
         if (this.ui) {
+            const ui = new Ui(this)
             this.innerContainer.appendChild(ui.get())
         }
+    }
+
+    bgColor(color) {
+        if (color) {
+            this.backgroundColor = color
+            const hex = this.backgroundColor.hex()
+            this.innerContainer.style.backgroundColor = hex
+        }
+        return this.backgroundColor
+    }
+
+    rainColor(color) {
+        if (color) {
+            this.color = color
+        }
+        return this.color
     }
 
     // clear the canvas
@@ -104,7 +123,7 @@ export default class Rain {
                     `wind locked: ${this.windLock}`,
                     `min x: ${this.min}`,
                     `max x: ${this.max}`,
-                    `windChange: ${this.windChange}`
+                    `randomColors: ${this.randomColors}`
                 ]
                 for (const s in stats) {
                     this.ctx.fillText(stats[s], 10, 10 + s * 12)
@@ -196,7 +215,7 @@ export default class Rain {
         }
     }
 
-    setSpeed(value = this.speedDefault) {
+    setSpeed(value) {
         if (!this.paused) {
             this.speed = Math.round(value)
         } else {
