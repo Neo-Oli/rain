@@ -207,7 +207,7 @@ export default class Ui {
             ],
             [
                 this.slider(
-                    'satur.',
+                    'saturation',
                     'saturation',
                     0,
                     100,
@@ -410,8 +410,8 @@ export default class Ui {
             max-height: 3em;
             background-color: ${rain.controlColor};
             position: absolute;
-            bottom: 0;
-            right: 3em;
+            bottom: 3em;
+            right: 0;
         }
         .${className} .controls>div{
             white-space: nowrap;
@@ -421,7 +421,7 @@ export default class Ui {
             max-width: calc(360px - 2em);
             padding-left: 1em;
             padding-right: 1em;
-            max-height: 100%;
+            max-height: calc(100% - 3em);
         }
         .${className} .controlsContainer #${this.controlsTriggerCheckId}{
             display: none;
@@ -445,7 +445,7 @@ export default class Ui {
         .${className} .controls label{
             color: ${rain.textColor};
             padding-left: 1em;
-            width: 5em;
+            width: 7em;
             display: inline-block
         }
         .${className} button{
