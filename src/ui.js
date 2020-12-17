@@ -394,6 +394,7 @@ export default class Ui {
             width: 100%;
         }
         .${className} .controlsContainer{
+            pointer-events: none;
             display: none;
             position: absolute;
             width: 100%;
@@ -402,6 +403,7 @@ export default class Ui {
             left: 0;
         }
         .${className} .controls{
+            pointer-events: all;
             max-width: 0;
             overflow: hidden;
             transition: all 1s;
@@ -431,6 +433,7 @@ export default class Ui {
             display: none;
         }
         .${className} .controlsContainer .controlsTrigger{
+            pointer-events: all;
             background-color: ${rain.controlColor};
             color: ${rain.textColor};
             font-size: 3em;
