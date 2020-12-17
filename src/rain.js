@@ -1,7 +1,7 @@
 import Drop from './drop'
 import positiveAngle from './positiveAngle'
 import schedule from './schedule'
-import ui from './ui'
+import Ui from './ui'
 export default class Rain {
     constructor(id, overwriteOptions) {
         Object.assign(this, {
@@ -13,6 +13,7 @@ export default class Rain {
                 wind: 15, // This is an angle in degrees
                 windRange: 60, // Max wind angle
                 parallax: 0.02,
+                parallaxMin: 0.0001,
                 canvasError:
                     'Your browser does not support the canvas element.',
                 debug: false,
@@ -22,13 +23,7 @@ export default class Rain {
                 className: 'rain-container',
                 speed: 100,
                 speedMax: 1000,
-                ui: true,
-                lPlay: 'play',
-                lPause: 'pause',
-                lStop: 'stop',
-                lDebug: 'debug',
-                lSpeed: 'speed',
-                lParallax: 'parallax'
+                ui: true
             },
             ...overwriteOptions
         })
@@ -65,8 +60,9 @@ export default class Rain {
         this.container.appendChild(this.innerContainer)
         this.innerContainer.appendChild(this.canvas)
         this.canvas.style.display = 'block'
+        const ui = new Ui(this)
         if (this.ui) {
-            this.innerContainer.appendChild(ui(this))
+            this.innerContainer.appendChild(ui.get())
         }
     }
 

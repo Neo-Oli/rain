@@ -1,259 +1,296 @@
-export const ui = (rain) => {
-    const uiContainer = document.createElement('DIV')
-    const className = rain.className
+export default class Ui {
+    constructor(rain, timestamp) {
+        this.rain = rain
+        this.className = rain.className
+        this.controlsTriggerCheckId = `${rain.className}_TriggerCheck`
+        this.uiContainer = document.createElement('DIV')
+        this.uiContainer.appendChild(this.getStyles())
 
-    const controlsContainer = document.createElement('DIV')
-    controlsContainer.classList.add('controlsContainer')
-    uiContainer.appendChild(controlsContainer)
-    const controls = document.createElement('DIV')
-    controls.classList.add('controls')
+        const controlsContainer = document.createElement('DIV')
+        controlsContainer.classList.add('controlsContainer')
+        this.uiContainer.appendChild(controlsContainer)
+        const controls = document.createElement('DIV')
+        controls.classList.add('controls')
 
-    const controlsInput = document.createElement('INPUT')
-    controlsInput.type = 'checkbox'
-    controlsInput.id = `${rain.className}_Input`
+        const controlsTriggerCheck = document.createElement('INPUT')
+        controlsTriggerCheck.type = 'checkbox'
+        controlsTriggerCheck.id = this.controlsTriggerCheckId
 
-    const controlsTrigger = document.createElement('LABEL')
-    controlsTrigger.classList.add('controlsTrigger')
-    controlsTrigger.innerHTML = '⚙'
-    controlsTrigger.htmlFor = controlsInput.id
+        const controlsTrigger = document.createElement('LABEL')
+        controlsTrigger.classList.add('controlsTrigger')
+        controlsTrigger.innerHTML = '⚙'
+        controlsTrigger.htmlFor = this.controlsTriggerCheckId
 
-    controlsContainer.appendChild(controlsInput)
-    controlsContainer.appendChild(controls)
-    controlsContainer.appendChild(controlsTrigger)
+        controlsContainer.appendChild(controlsTriggerCheck)
+        controlsContainer.appendChild(controls)
+        controlsContainer.appendChild(controlsTrigger)
 
-    const styles = document.createElement('STYLE')
-    uiContainer.appendChild(styles)
-    styles.innerHTML = `
-    .${className}{
-        user-select: none;
-        position: relative;
-        height: 100%;
-        width: 100%;
-    }
-    .${className} canvas{
-        display: block;
-        color: ${rain.textColor}
-    }
-    .${className}.playing .controlsContainer{
-        display: block;
-    }
-    .${className} .unpauseButton{
-        display: none;
-    }
-    .${className}.paused .unpauseButton{
-        display: inline;
-    }
-    .${className}.paused .pauseButton{
-        display: none;
-    }
-    .${className}.playing .playbutton{
-        display: none;
-    }
-    .${className} .playbutton{
-        position: absolute;
-        width: 10em;
-        height: 10em;
-        padding: 0;
-        background-color: ${rain.controlColor};
-        left: calc(50% - 5em);
-        top: calc(50% - 5em);
-    }
-    .${className} .playbutton>div{
-        position: absolute;
-        right: 1em;
-        bottom: 1em;
-    }
-    .${className} .controls .reset{
-        font-size: 2em;
-        position: relative;
-        top: 0.25em;
-    }
-    .${className} .controls input[type=range]{
-        position: relative;
-        top: 0.5em;
-    }
-    .${className} .playbutton:before{
-        display: inline-block;
-        content: '▶';
-        line-height: 100px;
-        font-size: 7em;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-    }
-    .${className} .controlsContainer{
-        display: none;
-        position: absolute;
-        background-color: ${rain.controlColor};
-        padding: 0.1em;
-        bottom: 1em;
-        right: 1em;
-        width: auto;
-        text-align: right;
-    }
-    .${className} .controls{
-        max-width: 0;
-        display: inline-block;
-        overflow: hidden;
-        transition: all 1s;
-        line-height: 3em;
-        max-height: 3em;
-        text-align: left;
-    }
-    .${className} .controls>div{
-        white-space: nowrap;
-    }
-    .${className} .controlsContainer #${controlsInput.id}:checked+.controls{
-        max-width: calc(360px - 2em);
-        padding-left: 1em;
-        padding-right: 1em;
-        max-height: 20em;
-    }
-    .${className} .controlsContainer #${controlsInput.id}{
-        display: none;
-    }
-    .${className} .controlsContainer .controlsTrigger{
-        color: ${rain.textColor};
-        font-size: 3em;
-        line-height: 1em;
-        cursor: pointer;
-        padding: 0;
-    }
-    .${className} .controls label{
-        color: ${rain.textColor};
-        padding-left: 1em;
-        width: 5em;
-        display: inline-block
-    }
-    .${className} button{
-        background: transparent;
-        color: ${rain.textColor};
-        border: none;
-        font-size: 1em;
-        cursor: pointer;
-    }
-    `
-    const debugButton = document.createElement('BUTTON')
-    debugButton.classList.add('debugbutton')
-    debugButton.innerHTML = rain.lDebug
-    debugButton.addEventListener('click', () => {
-        rain.debug = !rain.debug
-    })
-
-    const pauseButton = document.createElement('BUTTON')
-    pauseButton.classList.add('pauseButton')
-    pauseButton.innerHTML = rain.lPause
-    pauseButton.addEventListener('click', () => {
-        rain.pause()
-    })
-
-    const unpauseButton = document.createElement('BUTTON')
-    unpauseButton.classList.add('unpauseButton')
-    unpauseButton.innerHTML = rain.lPlay
-    unpauseButton.addEventListener('click', () => {
-        rain.unpause()
-    })
-
-    const stopButton = document.createElement('BUTTON')
-    stopButton.classList.add('stopbutton')
-    stopButton.innerHTML = rain.lStop
-    stopButton.addEventListener('click', () => {
-        rain.stop()
-    })
-
-    const playButton = document.createElement('BUTTON')
-    playButton.classList.add('playbutton')
-    playButton.innerHTML = `<div>${rain.lPlay}</div>`
-    playButton.addEventListener('click', () => {
-        rain.play()
-    })
-    uiContainer.appendChild(playButton)
-
-    const speedSlider = document.createElement('INPUT')
-    const speedLabel = document.createElement('LABEL')
-    speedLabel.innerHTML = `${rain.lSpeed}:`
-    speedSlider.id = `${rain.className}_speedLabel`
-    speedLabel.htmlFor = speedSlider.id
-    speedSlider.type = 'range'
-    speedSlider.min = '1'
-    speedSlider.max = 1000
-    speedSlider.value = logSliderReverse(rain.speedDefault, 1, rain.speedMax)
-    speedSlider.addEventListener('input', () => {
-        rain.setSpeed(logSlider(speedSlider.value, 1, rain.speedMax))
-    })
-
-    const speedSliderReset = document.createElement('BUTTON')
-    speedSliderReset.innerHTML = '⟲'
-    speedSliderReset.classList.add('reset')
-    speedSliderReset.addEventListener('click', () => {
-        speedSlider.value = logSliderReverse(
-            rain.speedDefault,
-            1,
-            rain.speedMax
+        this.uiContainer.appendChild(
+            this.button(
+                'play',
+                () => {
+                    rain.play()
+                },
+                'playbutton'
+            )
         )
-        rain.setSpeed()
-    })
-    const parallaxMin = 0.0001
-    const parallaxSlider = document.createElement('INPUT')
-    const parallaxLabel = document.createElement('LABEL')
-    parallaxLabel.innerHTML = `${rain.lParallax}:`
-    parallaxSlider.id = `${rain.className}_parallaxLabel`
-    parallaxLabel.htmlFor = parallaxSlider.id
-    parallaxSlider.type = 'range'
-    parallaxSlider.min = '1'
-    parallaxSlider.max = 1000
-    parallaxSlider.value = logSliderReverse(
-        rain.parallaxDefault,
-        parallaxMin,
-        1
-    )
-    parallaxSlider.addEventListener('input', () => {
-        rain.parallax = logSlider(parallaxSlider.value, parallaxMin, 1)
-    })
-
-    const parallaxSliderReset = document.createElement('BUTTON')
-    parallaxSliderReset.innerHTML = '⟲'
-    parallaxSliderReset.classList.add('reset')
-    parallaxSliderReset.addEventListener('click', () => {
-        parallaxSlider.value = logSliderReverse(
-            rain.parallaxDefault,
-            parallaxMin,
-            1
-        )
-        rain.parallax = rain.parallaxDefault
-    })
-
-    const controlPanel = [
-        [debugButton, pauseButton, unpauseButton, stopButton],
-        [speedLabel, speedSlider, speedSliderReset],
-        [parallaxLabel, parallaxSlider, parallaxSliderReset]
-    ]
-    for (const l in controlPanel) {
-        const line = controlPanel[l]
-        const lineDiv = document.createElement('DIV')
-        controls.appendChild(lineDiv)
-        for (const e in line) {
-            const element = line[e]
-            lineDiv.appendChild(element)
+        const controlPanel = [
+            [
+                this.button('debug', () => {
+                    rain.debug = !rain.debug
+                }),
+                this.button(
+                    'pause',
+                    () => {
+                        rain.pause()
+                    },
+                    'pauseButton'
+                ),
+                this.button(
+                    'play',
+                    () => {
+                        rain.unpause()
+                    },
+                    'unpauseButton'
+                ),
+                this.button('stop', () => {
+                    rain.stop()
+                })
+            ],
+            [
+                this.slider(
+                    'speed',
+                    'speed',
+                    1,
+                    1000,
+                    this.logSliderReverse(rain.speedDefault, 1, rain.speedMax),
+                    (slider) => {
+                        rain.setSpeed(
+                            this.logSlider(slider.value, 1, rain.speedMax)
+                        )
+                    },
+                    (slider) => {
+                        slider.value = this.logSliderReverse(
+                            rain.speedDefault,
+                            1,
+                            rain.speedMax
+                        )
+                        rain.setSpeed()
+                    }
+                )
+            ],
+            [
+                this.slider(
+                    'parallax',
+                    'parallax',
+                    1,
+                    1000,
+                    this.logSliderReverse(
+                        rain.parallaxDefault,
+                        rain.parallaxMin,
+                        1
+                    ),
+                    (slider) => {
+                        rain.parallax = this.logSlider(
+                            slider.value,
+                            rain.parallaxMin,
+                            1
+                        )
+                    },
+                    (slider) => {
+                        slider.value = this.logSliderReverse(
+                            rain.parallaxDefault,
+                            rain.parallaxMin,
+                            1
+                        )
+                        rain.parallax = rain.parallaxDefault
+                    }
+                )
+            ]
+        ]
+        for (const l in controlPanel) {
+            const line = controlPanel[l]
+            const lineDiv = document.createElement('DIV')
+            controls.appendChild(lineDiv)
+            for (const e in line) {
+                const element = line[e]
+                lineDiv.appendChild(element)
+            }
         }
     }
-    return uiContainer
+
+    button(label, click, className) {
+        const button = document.createElement('BUTTON')
+        if (className) {
+            button.classList.add(className)
+        }
+        button.innerHTML = `<div>${label}</div>`
+        button.addEventListener('click', click)
+        return button
+    }
+
+    slider(labelText, className, min, max, initialValue, input, reset) {
+        const slider = document.createElement('INPUT')
+        const label = document.createElement('LABEL')
+        label.innerHTML = `${labelText}:`
+        slider.id = `${this.className}_${className}`
+        label.htmlFor = slider.id
+        slider.type = 'range'
+        slider.min = min
+        slider.max = max
+        slider.value = initialValue
+        slider.addEventListener('input', () => {
+            input(slider)
+        })
+        const resetButton = this.button('⟲', () => {
+            reset(slider)
+        })
+        const sliderContainer = document.createElement('DIV')
+        sliderContainer.classList.add(className)
+        sliderContainer.appendChild(label)
+        sliderContainer.appendChild(slider)
+        sliderContainer.appendChild(resetButton)
+        return sliderContainer
+    }
+
+    get() {
+        return this.uiContainer
+    }
+
+    logSlider(position, min, max) {
+        const minp = 1
+        const maxp = 1000
+        const minv = Math.log(min)
+        const maxv = Math.log(max)
+        const scale = (maxv - minv) / (maxp - minp)
+        return Math.exp(minv + scale * (position - minp))
+    }
+
+    logSliderReverse(speed, min, max) {
+        const minp = 1
+        const maxp = 1000
+        const minv = Math.log(min)
+        const maxv = Math.log(max)
+        const scale = (maxv - minv) / (maxp - minp)
+        return (Math.log(speed) - minv) / scale + minp
+    }
+
+    getStyles() {
+        const rain = this.rain
+        const className = this.className
+        const styles = document.createElement('STYLE')
+        styles.innerHTML = `
+        .${className}{
+            user-select: none;
+            position: relative;
+            height: 100%;
+            width: 100%;
+        }
+        .${className} canvas{
+            display: block;
+            color: ${rain.textColor}
+        }
+        .${className}.playing .controlsContainer{
+            display: block;
+        }
+        .${className} .unpauseButton{
+            display: none;
+        }
+        .${className}.paused .unpauseButton{
+            display: inline;
+        }
+        .${className}.paused .pauseButton{
+            display: none;
+        }
+        .${className}.playing .playbutton{
+            display: none;
+        }
+        .${className} .playbutton{
+            position: absolute;
+            width: 10em;
+            height: 10em;
+            padding: 0;
+            background-color: ${rain.controlColor};
+            left: calc(50% - 5em);
+            top: calc(50% - 5em);
+        }
+        .${className} .playbutton>div{
+            position: absolute;
+            right: 1em;
+            bottom: 1em;
+        }
+        .${className} .controls .reset{
+            font-size: 2em;
+            position: relative;
+            top: 0.25em;
+        }
+        .${className} .controls input[type=range]{
+            position: relative;
+            top: 0.5em;
+        }
+        .${className} .playbutton:before{
+            display: inline-block;
+            content: '▶';
+            line-height: 100px;
+            font-size: 7em;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+        .${className} .controlsContainer{
+            display: none;
+            position: absolute;
+            background-color: ${rain.controlColor};
+            padding: 0.1em;
+            bottom: 1em;
+            right: 1em;
+            width: auto;
+            text-align: right;
+        }
+        .${className} .controls{
+            max-width: 0;
+            display: inline-block;
+            overflow: hidden;
+            transition: all 1s;
+            line-height: 3em;
+            max-height: 3em;
+            text-align: left;
+        }
+        .${className} .controls>div{
+            white-space: nowrap;
+        }
+        .${className} .controlsContainer
+        #${this.controlsTriggerCheckId}:checked+.controls{
+            max-width: calc(360px - 2em);
+            padding-left: 1em;
+            padding-right: 1em;
+            max-height: 20em;
+        }
+        .${className} .controlsContainer #${this.controlsTriggerCheckId}{
+            display: none;
+        }
+        .${className} .controlsContainer .controlsTrigger{
+            color: ${rain.textColor};
+            font-size: 3em;
+            line-height: 1em;
+            cursor: pointer;
+            padding: 0;
+        }
+        .${className} .controls label{
+            color: ${rain.textColor};
+            padding-left: 1em;
+            width: 5em;
+            display: inline-block
+        }
+        .${className} button{
+            background: transparent;
+            color: ${rain.textColor};
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+        }
+        `
+        return styles
+    }
 }
-const logSlider = (position, min, max) => {
-    const minp = 1
-    const maxp = 1000
-    const minv = Math.log(min)
-    const maxv = Math.log(max)
-    const scale = (maxv - minv) / (maxp - minp)
-    return Math.exp(minv + scale * (position - minp))
-}
-const logSliderReverse = (speed, min, max) => {
-    const minp = 1
-    const maxp = 1000
-    const minv = Math.log(min)
-    const maxv = Math.log(max)
-    const scale = (maxv - minv) / (maxp - minp)
-    return (Math.log(speed) - minv) / scale + minp
-}
-export default ui
