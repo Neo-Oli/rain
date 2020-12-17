@@ -24,6 +24,7 @@ export default class Rain {
                 controlColor: '#00000055',
                 textColor: 'white',
                 backgroundColor: '#070215',
+                backgroundOpacity: 1,
                 className: 'rain-container',
                 speed: 100,
                 speedMax: 1000,
@@ -74,8 +75,8 @@ export default class Rain {
     bgColor(color) {
         if (color) {
             this.backgroundColor = color
-            const hex = this.backgroundColor.hex()
-            this.innerContainer.style.backgroundColor = hex
+            const rgb = color.alpha(this.backgroundOpacity).rgb().string()
+            this.innerContainer.style.backgroundColor = rgb
         }
         return this.backgroundColor
     }
