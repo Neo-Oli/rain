@@ -93,6 +93,7 @@ export default class Ui {
                     rain.wind,
                     (value) => {
                         rain.wind = value
+                        rain.getadps()
                     },
                     null,
                     (state) => {

@@ -158,7 +158,6 @@ export default class Rain {
                     this.wind = 0 - this.windRange
                     this.windPositiveChange = !this.windPositiveChange
                 }
-                this.getRange()
                 this.getadps()
             }
         }
@@ -200,7 +199,6 @@ export default class Rain {
             this.width = newWidth
             this.height = newHeight
         }
-        this.getRange()
         this.getadps()
     }
 
@@ -210,6 +208,7 @@ export default class Rain {
      * area (min/max from getRange())
      */
     getadps() {
+        this.getRange()
         this.adps = Math.round((this.dps / 1000) * (0 - this.min + this.max))
         if (this.adps > this.adpsMax) {
             this.adps = this.adpsMax
