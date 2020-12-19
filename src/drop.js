@@ -1,38 +1,32 @@
 import Entity from './entity'
-import Color from 'color'
+import colorModes from './colormodes'
+import random from './random'
 export default class Drop extends Entity {
     constructor(rain, timestamp) {
         super(rain, timestamp)
         this.rain = rain
         this.x = this.getRandomPos()
-        this.z = this.rain.random(1, 100, rain.parallax)
+        this.z = random(1, 100, rain.parallax)
         this.blur = Math.pow(this.z / 100, 0.5)
-        this.size = this.rain.random(1, 5, 0.1)
+        this.size = random(1, 5, 0.1)
         this.length = 20 * this.z
         this.y = 0 - this.length
         this.speedModifier = 1 + this.size / 5
         this.speed = 100 * this.speedModifier
-        if (rain.randomColors) {
-            this.color = Color.hsl([
-                this.randomNum(0, 360),
-                this.randomNum(0, 100),
-                this.randomNum(0, 100)
-            ])
-                .fade(this.blur)
-                .rgb()
-                .array()
-        } else {
-            this.color = rain.color.fade(this.blur).rgb().array()
+        this.colorMode = colorModes(rain)[this.rain.colorMode]
+        this.setColor(this.x, this.y)
+    }
+
+    setColor(x, y) {
+        if (this.color && !this.colorMode.always) {
+            return
         }
+        this.color = this.colorMode.func(x, y).fade(this.blur).rgb().array()
     }
 
     // get a random position inside the x axis of the spawnable area
     getRandomPos() {
-        return Math.floor(this.randomNum(this.rain.min, this.rain.max))
-    }
-
-    randomNum(min, max) {
-        return Math.random() * (max - min) + min
+        return Math.floor(random(this.rain.min, this.rain.max))
     }
 
     destroy() {
@@ -60,6 +54,7 @@ export default class Drop extends Entity {
                 this.x -= windspeed
             }
         }
+        this.setColor(this.x, this.y)
         if (this.y > this.rain.height + this.length) {
             this.destroy()
         }

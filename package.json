@@ -10,7 +10,7 @@
     "dev": "webpack --mode=development --watch",
     "build": "webpack --mode=development",
     "prod": "webpack --mode=production",
-    "lint": "eslint src/*.js --color --ext js --fix"
+    "lint": "eslint . --color --ext js --fix"
   },
   "devDependencies": {
     "@babel/core": "*",
@@ -27,6 +27,7 @@
     "eslint-plugin-promise": "*",
     "eslint-plugin-sort-destructure-keys": "*",
     "prettier": "*",
+    "url-loader": "*",
     "webpack": "*",
     "webpack-cli": "*"
   },

@@ -1,3 +1,4 @@
+import colorModes from './colormodes'
 export default class Ui {
     constructor(rain, timestamp) {
         this.rain = rain
@@ -147,12 +148,13 @@ export default class Ui {
             [this.title('rain color')],
             ...this.sliderGroup('rainColor'),
             [
-                this.toggle(
-                    (state) => {
-                        rain.randomColors = state
+                this.select(
+                    Object.keys(colorModes(rain)),
+                    (value) => {
+                        rain.colorMode = value
                     },
-                    false,
-                    'random colors'
+                    rain.colorMode,
+                    'Color Mode'
                 )
             ],
             [this.title('background color')],
@@ -184,6 +186,35 @@ export default class Ui {
         label.classList.add('title')
         label.innerHTML = string
         return label
+    }
+
+    select(options, func, def, label) {
+        const selectBoxContainer = document.createElement('DIV')
+        const selectBox = document.createElement('SELECT')
+        for (const e in options) {
+            const name = options[e]
+            const option = document.createElement('OPTION')
+            selectBox.appendChild(option)
+            option.innerHTML = name
+            option.value = name
+            if (def === name) {
+                option.selected = 'selected'
+            }
+        }
+        selectBox.addEventListener('change', () => {
+            func(selectBox.value)
+        })
+        if (label) {
+            const labelEl = document.createElement('LABEL')
+            const labelText = document.createElement('span')
+            labelText.innerHTML = label
+            labelEl.appendChild(labelText)
+            labelEl.appendChild(selectBox)
+            selectBoxContainer.appendChild(labelEl)
+        } else {
+            selectBoxContainer.appendChild(selectBox)
+        }
+        return selectBoxContainer
     }
 
     sliderGroup(color) {
@@ -450,6 +481,11 @@ export default class Ui {
         .${className} .controls label input + span{
             margin-left: 1em;
         }
+
+        .${className} .controls label span + select{
+            margin-left: 1em;
+        }
+
         .${className} .controls label{
             color: ${rain.textColor};
             padding-left: 1em;

@@ -1,5 +1,6 @@
 import Drop from './drop'
 import schedule from './schedule'
+import random from './random'
 import Ui from './ui'
 import Color from 'color'
 export default class Rain {
@@ -29,7 +30,8 @@ export default class Rain {
                 speed: 100,
                 speedMax: 1000,
                 ui: true,
-                randomColors: false
+                colorMode: 'rain',
+                imgResolution: 100
             },
             ...overwriteOptions
         })
@@ -66,6 +68,25 @@ export default class Rain {
         this.innerContainer.appendChild(this.canvas)
         this.canvas.style.display = 'block'
         this.bgColor(Color(this.backgroundColor))
+
+        // cache for image color schemes
+        const imageCanvas = document.createElement('CANVAS')
+        imageCanvas.width = this.imgResolution
+        imageCanvas.height = this.imgResolution
+        this.image = new Image()
+        this.image.onload = () => {
+            this.imgCtx.drawImage(
+                this.image,
+                0,
+                0,
+                this.imgResolution,
+                this.imgResolution
+            )
+            this.imgCache = {}
+        }
+        this.imgCache = {}
+        this.imgCtx = imageCanvas.getContext('2d')
+
         if (this.ui) {
             const ui = new Ui(this)
             this.innerContainer.appendChild(ui.get())
@@ -124,7 +145,7 @@ export default class Rain {
                     `wind locked: ${this.windLock}`,
                     `min x: ${this.min}`,
                     `max x: ${this.max}`,
-                    `randomColors: ${this.randomColors}`
+                    `color mode: ${this.colorMode}`
                 ]
                 for (const s in stats) {
                     this.ctx.fillText(stats[s], 10, 10 + s * 12)
@@ -133,17 +154,13 @@ export default class Rain {
         }
     }
 
-    random(max, min = 0, pow = 1) {
-        return Math.round(Math.pow(Math.random(), pow) * (max - min) + min)
-    }
-
     // Do some randomness to the wind to simulate changing wind intensity
     windChangeCalc() {
         if (!this.windLock) {
-            if (this.random(0, 5) === 0) {
+            if (random(0, 5) === 0) {
                 this.windPositiveChange = !this.windPositiveChange
             }
-            this.windChange = this.random(0, this.windRange / 4, 0.1)
+            this.windChange = random(0, this.windRange / 4, 0.1)
             if (this.windChange) {
                 if (this.windPositiveChange) {
                     this.wind += this.windChange
@@ -169,10 +186,10 @@ export default class Rain {
      */
     dpsChangeCalc() {
         if (!this.dpsLock) {
-            if (this.random(0, 5) === 0) {
+            if (random(0, 5) === 0) {
                 this.dpsPositiveChange = !this.dpsPositiveChange
             }
-            this.dpsChange = this.random(0, this.dpsMax, 0.01)
+            this.dpsChange = random(0, this.dpsMax, 0.01)
             if (this.dpsPositiveChange) {
                 this.dps += this.dpsChange
             } else {
