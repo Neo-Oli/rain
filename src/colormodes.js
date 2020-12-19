@@ -73,7 +73,7 @@ const colorModes = (rain) => {
     return {
         rain: {
             func: (x, y) => {
-                return rain.rainColor()
+                return rain.color
             }
         },
         random: {
@@ -87,7 +87,7 @@ const colorModes = (rain) => {
         },
         'random (hue only)': {
             func: (x, y) => {
-                return rain.rainColor(rain.rainColor().hue(random(0, 360)))
+                return rain.rainColor().hue(random(0, 360))
             }
         },
         ...colorStripesBoth(
