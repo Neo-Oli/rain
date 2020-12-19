@@ -4,6 +4,7 @@ import jollyrogerImage from './colorModeImages/jollyroger.png'
 import demisexualImage from './colorModeImages/demisexual.png'
 import polyamoryImage from './colorModeImages/polyamory.png'
 import Color from 'color'
+
 const colorsFromImage = (x, y, imageSrc, rain) => {
     if (rain.image.src !== imageSrc) {
         rain.image.src = imageSrc
@@ -33,11 +34,16 @@ const colorsFromImage = (x, y, imageSrc, rain) => {
     rain.imgCache[smallx][smally] = color
     return color
 }
+
 const colorStripesBoth = (name, stripes, rain) => {
     return {
         [`${name}_vertical`]: {
             func: (x, y) => {
-                return colorStripes(x, rain.width, stripes)
+                return colorStripes(
+                    x + (0 - rain.min),
+                    rain.max + (0 - rain.min),
+                    stripes
+                )
             }
         },
         [`${name}_horizontal`]: {
@@ -231,4 +237,5 @@ const colorModes = (rain) => {
         }
     }
 }
+
 export default colorModes
