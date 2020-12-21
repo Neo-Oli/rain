@@ -86,6 +86,7 @@ export default class Rain {
         }
         this.imgCache = {}
         this.imgCtx = imageCanvas.getContext('2d')
+        this.imagesrc= ""
 
         if (this.ui) {
             const ui = new Ui(this)

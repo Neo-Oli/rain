@@ -26,8 +26,8 @@
     "eslint-plugin-prettier": "*",
     "eslint-plugin-promise": "*",
     "eslint-plugin-sort-destructure-keys": "*",
+    "file-loader": "*",
     "prettier": "*",
-    "url-loader": "*",
     "webpack": "*",
     "webpack-cli": "*"
   },

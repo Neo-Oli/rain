@@ -6,8 +6,9 @@ import polyamoryImage from './colorModeImages/polyamory.png'
 import Color from 'color'
 
 const colorsFromImage = (x, y, imageSrc, rain) => {
-    if (rain.image.src !== imageSrc) {
+    if (rain.imagesrc !== imageSrc) {
         rain.image.src = imageSrc
+        rain.imagesrc = imageSrc
     }
     const smallx = Math.max(
         0,
