@@ -31,7 +31,7 @@ export default class Rain {
                 speedMax: 1000,
                 ui: true,
                 colorMode: 'rain',
-                imgResolution: 100
+                imgResolution: 20
             },
             ...overwriteOptions
         })
