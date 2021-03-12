@@ -1,6 +1,6 @@
 {
   "name": "rain",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A Javascript simulation of rain.",
   "main": "src/rain.js",
   "repository": "git@github.com:Neo-Oli/rain.git",
