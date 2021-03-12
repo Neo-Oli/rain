@@ -5,6 +5,12 @@ import Ui from './ui'
 import Color from 'color'
 export default class Rain {
     constructor(id, overwriteOptions) {
+        this.id = id
+        this.overwriteOptions = overwriteOptions
+        this.defaults()
+    }
+
+    defaults() {
         Object.assign(this, {
             ...{
                 dps: 100, // drops per second
@@ -33,7 +39,7 @@ export default class Rain {
                 colorMode: 'rain',
                 imgResolution: 20
             },
-            ...overwriteOptions
+            ...this.overwriteOptions
         })
         this.color = Color(this.color)
         this.min = 0
@@ -41,7 +47,6 @@ export default class Rain {
         this.savedSpeed = this.speed
         this.windRange = Math.min(this.windRange, 89) // don't go over 90
 
-        this.id = id
         this.elapsed = 0
         this.stopped = true
 
@@ -56,8 +61,10 @@ export default class Rain {
         this.windChange = 0
         this.tickObjects = ['drops']
         this.paused = false
+        this.width = 0
+        this.height = 0
 
-        this.container = document.getElementById(id)
+        this.container = document.getElementById(this.id)
         this.container.innerHTML = '' // renoves nojs element
         this.canvas = document.createElement('CANVAS')
         this.ctx = this.canvas.getContext('2d')
@@ -354,6 +361,7 @@ export default class Rain {
             this.unpause()
         }
         this.stopped = true
+        this.defaults()
         this.innerContainer.classList.remove('playing')
     }
 }

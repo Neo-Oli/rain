@@ -56,6 +56,10 @@ export default class Ui {
                 ),
                 this.button('stop', () => {
                     rain.stop()
+                }),
+                this.button('reset', () => {
+                    rain.stop()
+                    rain.play()
                 })
             ],
             [
