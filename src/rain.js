@@ -48,7 +48,7 @@ export default class Rain {
         this.windRange = Math.min(this.windRange, 89) // don't go over 90
 
         this.elapsed = 0
-        this.stopped = true
+        this.stopped = false
 
         this.fps = 0
         this.fpsCur = 0
@@ -65,7 +65,7 @@ export default class Rain {
         this.height = 0
 
         this.container = document.getElementById(this.id)
-        this.container.innerHTML = '' // renoves nojs element
+        this.container.innerHTML = '' // removes nojs element
         this.canvas = document.createElement('CANVAS')
         this.ctx = this.canvas.getContext('2d')
         this.canvas.innerHTML = this.canvasError
@@ -326,6 +326,9 @@ export default class Rain {
     }
 
     play() {
+        if (this.stopped) {
+            this.defaults()
+        }
         this.stopped = false
         this.updateCanvas()
         this.innerContainer.classList.add('playing')
@@ -360,7 +363,6 @@ export default class Rain {
             this.unpause()
         }
         this.stopped = true
-        this.defaults()
         this.innerContainer.classList.remove('playing')
     }
 }
