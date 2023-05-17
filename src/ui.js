@@ -454,7 +454,7 @@ export default class Ui {
         }
         .${className} .controlsContainer
         #${this.controlsTriggerCheckId}:checked+.controls{
-            max-width: calc(360px - 2em);
+            max-width: 20em;
             padding-left: 1em;
             padding-right: 1em;
             max-height: calc(100% - 3em);
